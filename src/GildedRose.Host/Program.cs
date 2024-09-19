@@ -1,4 +1,7 @@
-﻿public class Item
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+
+public class Item
     {
         public string Name { get; set; }
         public int SellIn { get; set; }
@@ -32,10 +35,30 @@
                         }
 
             };
+            
+            var days = 1;
+            if (args.Length > 0)
+            {
+                int.TryParse(args[0], out days);
+            }
 
-            app.UpdateQuality();
+            var jsonSerializerOptions = new JsonSerializerOptions
+            {
+                WriteIndented = true
+            };
+            
+            Console.WriteLine("-------- Initial State --------");
+            Console.WriteLine(JsonSerializer.Serialize(app.Items, jsonSerializerOptions));
 
-            Console.ReadKey();
+            for (var i = 1; i <= days; i++)
+            {
+                Console.WriteLine();
+                Console.WriteLine("-------- day " + i + " --------");
+                app.UpdateQuality();
+                Console.WriteLine(JsonSerializer.Serialize(app.Items, jsonSerializerOptions));
+            }
+
+            // Console.ReadKey();
         }
 
         public void UpdateQuality()
